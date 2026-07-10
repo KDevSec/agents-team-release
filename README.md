@@ -1,11 +1,11 @@
 > **📦 ieidev-team 发布 / 分发仓（public release repo）**
 > 本仓库**只放发布说明（landing）**；插件以**自包含 npm 装机包**（`.tgz`，包内自带完整插件本体）随各版 **Releases** 分发，源码在私有仓维护。
-> ✅ 装机（Windows / Linux / macOS 通用）：到 [Releases](https://github.com/KDevSec/ieidev-team-release/releases/latest) 下载 `.tgz` → `npm i -g ./ieidev-team-0.6.0.tgz && ieidev-team`（不碰 npm registry / git 源仓，`npx ieidev-team` 不可用）。
+> ✅ 装机（Windows / Linux / macOS 通用）：到 [Releases](https://github.com/KDevSec/ieidev-team-release/releases/latest) 下载 `.tgz` → `npm i -g ./ieidev-team-0.8.0.tgz && ieidev-team`（不碰 npm registry / git 源仓，`npx ieidev-team` 不可用）。
 > 各版本制品见 Releases。
 
 # ieidev-team
 
-ieidev 数字员工集群——自包含单插件（编排引擎 + 记忆底座 + 业务员工 + 能力 skill）。
+ieidev 数字员工集群——自包含单插件（编排引擎 + 记忆底座 + 业务员工 + 能力 skill）。**0.8.0 起一包多宿主**：同一个装机包除 Claude Code 外，还可把数字员工装到 [opencode](https://opencode.ai) 宿主运行（见下「多宿主」）。
 
 从 [KDevSec/kdev-agents](https://github.com/KDevSec/kdev-agents) clean-room 抽取并通用化（去公司定制前缀、去第三方依赖、单插件化）。源仓保持冻结，本仓为通用产品going-forward 主线。
 
@@ -23,31 +23,33 @@ ieidev 数字员工集群——自包含单插件（编排引擎 + 记忆底座 
 # 跨平台（需 gh，自动取最新版）
 gh release download --repo KDevSec/ieidev-team-release --pattern '*.tgz'
 # Linux / macOS（指定版本直链）
-curl -fL -O https://github.com/KDevSec/ieidev-team-release/releases/download/v0.6.0/ieidev-team-0.6.0.tgz
+curl -fL -O https://github.com/KDevSec/ieidev-team-release/releases/download/v0.8.0/ieidev-team-0.8.0.tgz
 ```
 
 ```powershell
 # Windows PowerShell
-iwr https://github.com/KDevSec/ieidev-team-release/releases/download/v0.6.0/ieidev-team-0.6.0.tgz -OutFile ieidev-team-0.6.0.tgz
+iwr https://github.com/KDevSec/ieidev-team-release/releases/download/v0.8.0/ieidev-team-0.8.0.tgz -OutFile ieidev-team-0.8.0.tgz
 ```
 
 ### 2. 本地装（npm + node，三平台通用）
 
 ```sh
-npm i -g ./ieidev-team-0.6.0.tgz
+npm i -g ./ieidev-team-0.8.0.tgz
 ieidev-team
 ```
 
-装机做三件事，**幂等、可重跑**：注册 marketplace（用**包内本地路径**）→ 装插件 `ieidev-team@ieidev` → 接状态栏。装好后状态栏出现 `ieidev 团队 …`；重载插件（`/reload-plugins`）或重启 session 后生效。
+装机做三件事，**幂等、可重跑**：注册 marketplace（用**包内本地路径**）→ 装插件 `ieidev-team@ieidev` → 接状态栏。装好后状态栏出现 `ieidev-team …`；重载插件（`/reload-plugins`）或重启 session 后生效。
 
 > **为什么不碰 registry / 源码仓**：installer（`bin/cli.js` / `install.sh`）检测到包内 `.claude-plugin/marketplace.json`，直接用**包内本地路径** `marketplace add`、`plugin install` 把插件复制进 `~/.claude/plugins/cache/`。所以装机只需这个 `.tgz`，无需 npm 账号、无需访问源码仓。`npx ieidev-team` **不可用**（不发 registry）。
-> **unix / WSL / Git Bash** 另可解包跑脚本：`tar xzf ieidev-team-0.6.0.tgz && cd package && bash install.sh`（与上面 npm 装法共用同一幂等决策核）。
+> **unix / WSL / Git Bash** 另可解包跑脚本：`tar xzf ieidev-team-0.8.0.tgz && cd package && bash install.sh`（与上面 npm 装法共用同一幂等决策核）。
 
 常用开关（`ieidev-team --help` 看全部）：
 
 ```sh
 ieidev-team --project                       # 写项目级状态栏（当前目录 .claude/settings.json，默认用户级）
 ieidev-team --marketplace-source <本地路径>   # 覆盖 marketplace 源（离线/自定义；默认=包内自带插件本地路径）
+ieidev-team --host all|claude-code|opencode  # 选装宿主（默认 all：探测本机在场宿主逐个装）
+ieidev-team --owner auto|ieidev              # opencode 主配置家归属决策（默认 auto 探测，绝不覆盖既有配置）
 ```
 
 ### 3. 或用 `/plugin` 安装（需搭配 `/ieidev-team:setup` 接状态栏）
@@ -73,6 +75,14 @@ ieidev-team --marketplace-source <本地路径>   # 覆盖 marketplace 源（离
 /ieidev-team:setup --uninstall
 /plugin uninstall ieidev-team@ieidev
 ```
+
+### 4. 多宿主：装到 opencode（0.8.0+）
+
+同一个 `.tgz` 也能把数字员工装到 opencode。默认 `--host all` 探测本机在场宿主逐个装（opencode 需已安装且**至少启动过一次**——配置目录尚未生成时视为未在场跳过）；`--host opencode` 只装 opencode 侧。
+
+- **隔离共存**：ieidev 资产落**专属配置家**（默认 `~/.config/opencode-ieidev/opencode`，worker 经 XDG 定向消费），不触碰你现有的 opencode 全局配置；与 oh-my-openagent（oma）同机时归属自动探测让位（`--owner` 可显式指定），**绝不覆盖既有 oma / 个人配置**。
+- **行为对齐**：agent 发现、拦截插件加载、人工审核闸在 opencode worker 上端到端生效；员工模型由 5 档语义 tier 统一映射到各宿主模型，宿主可独立换模型不改员工定义。
+- Windows 上 opencode 宿主的配置隔离为 best-effort，未经真机验证（CC 宿主不受影响）。
 
 ## 用法（按步骤）
 
@@ -113,7 +123,7 @@ ieidev-team --marketplace-source <本地路径>   # 覆盖 marketplace 源（离
 HUD 把数字员工的进展可视化。三个通道，按需选。命令里的 `${CLAUDE_PLUGIN_ROOT}` 是装机后的插件根目录（在插件目录里也可直接用 `PYTHONPATH=pyieidev`）。
 
 **① 状态栏（装机即有，零操作）**
-Claude Code 底部 `ieidev 团队 …` 单行，显示在跑的需求 / 当前节点 / 活动；无在跑任务时显示 `ieidev 团队 │ 暂无在跑需求`。
+Claude Code 底部 `ieidev-team …` 单行，显示在跑的需求 / 当前节点 / 活动；无在跑任务时显示 `ieidev-team │ 暂无在跑需求`。
 
 **② 实时全局台（0.2.0 新，推荐）—— 一个浏览器台子看本机所有项目**
 
@@ -157,7 +167,8 @@ PYTHONPATH=${CLAUDE_PLUGIN_ROOT}/pyieidev python3 -m ieidev_hud render          
 | 需求架构师 `req-architect` | 需求澄清 → SR 规格 → 拆解（AR + 用户故事）→ 原型 → 方案设计 |
 | 开发工程师 `dev-engineer` | 环境对齐 → 实施计划 → 编码/前端实现 → 安全自评 → E2E 视觉验收 → 部署 |
 | 测试工程师 `test-engineer` | 黑盒测试点/用例设计 → UI/API 自动化执行 |
-| 评审专家 `reviewer` | 方案/SR/故事/原型/代码/安全/测试设计/测试覆盖 多维度百分制评审 gate |
+| 调研员 `researcher` | 探索调研：立题（问题域/成功判据/方法集）→ 外部/内部取证 → 综合成文（引用 + 置信度分级）|
+| 评审专家 `reviewer` | 方案/SR/故事/原型/代码/安全/测试设计/测试覆盖/调研 多维度百分制评审 gate |
 | **CEO 总编排** = `goal` skill | 高层目标 → 交付链编排 + 人工闸 + 发函 CQO |
 | **CQO 监督员** = `cqo-orchestrator` | 跨 flow 质量监督（L-a 逐事件全检 + L-b circuit-breaker 聚合 + L-c 棒间建议），建议非拦截 |
 
