@@ -1,6 +1,6 @@
 > **📦 ieidev-team 发布 / 分发仓（public release repo）**
 > 本仓库**只放发布说明（landing）**；插件以**自包含 npm 装机包**（`.tgz`，包内自带完整插件本体）随各版 **Releases** 分发，源码在私有仓维护。
-> ✅ 装机（Windows / Linux / macOS 通用）：到 [Releases](https://github.com/KDevSec/ieidev-team-release/releases/latest) 下载 `.tgz` → `npm i -g ./ieidev-team-0.10.0.tgz && ieidev-team`（不碰 npm registry / git 源仓，`npx ieidev-team` 不可用）。
+> ✅ 装机（Windows / Linux / macOS 通用）：到 [Releases](https://github.com/KDevSec/ieidev-team-release/releases/latest) 下载 `.tgz` → `npm i -g ./ieidev-team-0.11.0.tgz && ieidev-team`（不碰 npm registry / git 源仓，`npx ieidev-team` 不可用）。
 > 各版本制品见 Releases。
 
 # ieidev-team
@@ -11,7 +11,7 @@ ieidev 数字员工集群——自包含单插件（编排引擎 + 记忆底座 
 
 ## 安装
 
-前置：[Claude Code](https://docs.claude.com/claude-code) CLI（`claude`）+ `python3`（编排引擎与状态栏需要）。可选：`superpowers` marketplace（**推荐**：方法论 skill 来源——`writing-plans` / `finishing-a-development-branch` / `brainstorming` / `verification-before-completion` / `test-driven-development`（开发工程师代码路径的红绿 TDD 驱动器），缺失则这些能力退化为主控手做，不阻断）、`understand-anything` marketplace（`codegraph-*` 代码图 skill 的后端，缺失仅该能力降级）、Playwright MCP server（`qa` / `ui-autotest` 黑盒 UI 测试需要，缺失则这两类测试 env-gated 跳过）。
+前置：[Claude Code](https://docs.claude.com/claude-code) CLI（`claude`）+ `python3`（编排引擎与状态栏需要）。方法论 skill（TDD/brainstorming/writing-plans 等 5 个，fork 自 superpowers，MIT）与 code-graph 后端 understand-anything（vendored 快照，MIT）**均已内置随包安装，无需第三方 marketplace，支持离线/内网装机**——understand-anything 已 vendored **离线全精度切片**（`packages/core/dist` + web-tree-sitter WASM 运行时 + 10 门语言语法 WASM，~27M，纯 JS+WASM、平台无关免编译，实测 strace 断网注入下 tree-sitter 满精度产图）；交互式 dashboard 与 fingerprint 增量为增值功能，需联网首装，不影响 build/trace/impact/spec-link 核心链路。可选：Playwright MCP server（`qa` / `ui-autotest` 黑盒 UI 测试需要，缺失则这两类测试 env-gated 跳过）。
 
 > 📦 本插件**不发布到 npm registry**、也**不依赖 git 源码仓**——只通过 GitHub Release 分发一个**自包含 npm 装机包**（`.tgz`，包内自带完整插件本体）。**装机全程本地，Windows / Linux / macOS 通用。**
 
@@ -23,25 +23,25 @@ ieidev 数字员工集群——自包含单插件（编排引擎 + 记忆底座 
 # 跨平台（需 gh，自动取最新版）
 gh release download --repo KDevSec/ieidev-team-release --pattern '*.tgz'
 # Linux / macOS（指定版本直链）
-curl -fL -O https://github.com/KDevSec/ieidev-team-release/releases/download/v0.10.0/ieidev-team-0.10.0.tgz
+curl -fL -O https://github.com/KDevSec/ieidev-team-release/releases/download/v0.11.0/ieidev-team-0.11.0.tgz
 ```
 
 ```powershell
 # Windows PowerShell
-iwr https://github.com/KDevSec/ieidev-team-release/releases/download/v0.10.0/ieidev-team-0.10.0.tgz -OutFile ieidev-team-0.10.0.tgz
+iwr https://github.com/KDevSec/ieidev-team-release/releases/download/v0.11.0/ieidev-team-0.11.0.tgz -OutFile ieidev-team-0.11.0.tgz
 ```
 
 ### 2. 本地装（npm + node，三平台通用）
 
 ```sh
-npm i -g ./ieidev-team-0.10.0.tgz
+npm i -g ./ieidev-team-0.11.0.tgz
 ieidev-team
 ```
 
 装机做三件事，**幂等、可重跑**：注册 marketplace（用**包内本地路径**）→ 装插件 `ieidev-team@ieidev` → 接状态栏。装好后状态栏出现 `ieidev-team …`；重载插件（`/reload-plugins`）或重启 session 后生效。
 
 > **为什么不碰 registry / 源码仓**：installer（`bin/cli.js` / `install.sh`）检测到包内 `.claude-plugin/marketplace.json`，直接用**包内本地路径** `marketplace add`、`plugin install` 把插件复制进 `~/.claude/plugins/cache/`。所以装机只需这个 `.tgz`，无需 npm 账号、无需访问源码仓。`npx ieidev-team` **不可用**（不发 registry）。
-> **unix / WSL / Git Bash** 另可解包跑脚本：`tar xzf ieidev-team-0.10.0.tgz && cd package && bash install.sh`（与上面 npm 装法共用同一幂等决策核）。
+> **unix / WSL / Git Bash** 另可解包跑脚本：`tar xzf ieidev-team-0.11.0.tgz && cd package && bash install.sh`（与上面 npm 装法共用同一幂等决策核）。
 
 常用开关（`ieidev-team --help` 看全部）：
 
