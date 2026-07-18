@@ -1,6 +1,6 @@
 > **📦 ieidev-team 发布 / 分发仓（public release repo）**
 > 本仓库**只放发布说明（landing）**；插件以**自包含 npm 装机包**（`.tgz`，包内自带完整插件本体）随各版 **Releases** 分发，源码在私有仓维护。
-> ✅ 装机（Windows / Linux / macOS 通用）：到 [Releases](https://github.com/KDevSec/ieidev-team-release/releases/latest) 下载 `.tgz` → `npm i -g ./ieidev-team-0.11.0.tgz && ieidev-team`（不碰 npm registry / git 源仓，`npx ieidev-team` 不可用）。
+> ✅ 装机（Windows / Linux / macOS 通用）：到 [Releases](https://github.com/KDevSec/ieidev-team-release/releases/latest) 下载 `.tgz` → `npm i -g ./ieidev-team-0.13.0.tgz && ieidev-team`（不碰 npm registry / git 源仓，`npx ieidev-team` 不可用）。
 > 各版本制品见 Releases。
 
 # ieidev-team
@@ -23,32 +23,32 @@ ieidev 数字员工集群——自包含单插件（编排引擎 + 记忆底座 
 # 跨平台（需 gh，自动取最新版）
 gh release download --repo KDevSec/ieidev-team-release --pattern '*.tgz'
 # Linux / macOS（指定版本直链）
-curl -fL -O https://github.com/KDevSec/ieidev-team-release/releases/download/v0.11.0/ieidev-team-0.11.0.tgz
+curl -fL -O https://github.com/KDevSec/ieidev-team-release/releases/download/v0.13.0/ieidev-team-0.13.0.tgz
 ```
 
 ```powershell
 # Windows PowerShell
-iwr https://github.com/KDevSec/ieidev-team-release/releases/download/v0.11.0/ieidev-team-0.11.0.tgz -OutFile ieidev-team-0.11.0.tgz
+iwr https://github.com/KDevSec/ieidev-team-release/releases/download/v0.13.0/ieidev-team-0.13.0.tgz -OutFile ieidev-team-0.13.0.tgz
 ```
 
 ### 2. 本地装（npm + node，三平台通用）
 
 ```sh
-npm i -g ./ieidev-team-0.11.0.tgz
+npm i -g ./ieidev-team-0.13.0.tgz
 ieidev-team
 ```
 
 装机做三件事，**幂等、可重跑**：注册 marketplace（用**包内本地路径**）→ 装插件 `ieidev-team@ieidev` → 接状态栏。装好后状态栏出现 `ieidev-team …`；重载插件（`/reload-plugins`）或重启 session 后生效。
 
 > **为什么不碰 registry / 源码仓**：installer（`bin/cli.js` / `install.sh`）检测到包内 `.claude-plugin/marketplace.json`，直接用**包内本地路径** `marketplace add`、`plugin install` 把插件复制进 `~/.claude/plugins/cache/`。所以装机只需这个 `.tgz`，无需 npm 账号、无需访问源码仓。`npx ieidev-team` **不可用**（不发 registry）。
-> **unix / WSL / Git Bash** 另可解包跑脚本：`tar xzf ieidev-team-0.11.0.tgz && cd package && bash install.sh`（与上面 npm 装法共用同一幂等决策核）。
+> **unix / WSL / Git Bash** 另可解包跑脚本：`tar xzf ieidev-team-0.13.0.tgz && cd package && bash install.sh`（与上面 npm 装法共用同一幂等决策核）。
 
 常用开关（`ieidev-team --help` 看全部）：
 
 ```sh
 ieidev-team --project                       # 写项目级状态栏（当前目录 .claude/settings.json，默认用户级）
 ieidev-team --marketplace-source <本地路径>   # 覆盖 marketplace 源（离线/自定义；默认=包内自带插件本地路径）
-ieidev-team --host all|claude-code|opencode  # 选装宿主（默认 all：探测本机在场宿主逐个装）
+ieidev-team --host all|claude-code|opencode|codebuddy  # 选装宿主（默认 all：探测本机在场宿主逐个装）
 ieidev-team --owner auto|ieidev              # opencode 主配置家归属决策（默认 auto 探测，绝不覆盖既有配置）
 ```
 
@@ -83,6 +83,17 @@ ieidev-team --owner auto|ieidev              # opencode 主配置家归属决策
 - **隔离共存**：ieidev 资产落**专属配置家**（默认 `~/.config/opencode-ieidev/opencode`，worker 经 XDG 定向消费），不触碰你现有的 opencode 全局配置；与 oh-my-openagent（oma）同机时归属自动探测让位（`--owner` 可显式指定），**绝不覆盖既有 oma / 个人配置**。
 - **行为对齐**：agent 发现、拦截插件加载、人工审核闸在 opencode worker 上端到端生效；员工模型由 5 档语义 tier 统一映射到各宿主模型，宿主可独立换模型不改员工定义。
 - Windows 上 opencode 宿主的配置隔离为 best-effort，未经真机验证（CC 宿主不受影响）。
+
+### 5. 多宿主：装到 CodeBuddy
+
+同一个 `.tgz` 也能把数字员工装到 [CodeBuddy Code](https://www.codebuddy.ai)（`@tencent-ai/codebuddy-code`，Claude Code 家族衍生，插件清单/plugin CLI/钩子协议与 CC 近乎同构）。前置：本机已装 `codebuddy` CLI 且已登录；`--host codebuddy` 只装 codebuddy 侧，`--host all` 探测到 codebuddy 在场时一并装。
+
+- **落地方式**：复用 codebuddy 自带 plugin CLI（`codebuddy plugin marketplace add` + `codebuddy plugin install ieidev-team@ieidev`），对称于 Claude Code 装机段——不像 opencode 需要自研文件落地/协议翻译层。
+- **模型档位**：5 档语义 tier 映射到 codebuddy 模型面（强档 `glm-5.2`、执行档 `deepseek-v4-flash`），宿主可独立换模型不改员工定义。
+- **编排驱动（L2）**：`flow-driver`/`goal` 可用 `codebuddy -p` spawn worker；判停/续跑与 Claude Code 一致（主判据读 `.ieidev/` 引擎状态，宿主无关）。驱动为单测覆盖 + 与 CC/opencode 同构；**真机 L2「待审核→续跑」全链路待坐实**。
+- 实测（CodeBuddy Code 2.117.0）：装机后交互会话内 36 个 agent / 6 个 command / 25 个 skill / 18 个钩子被发现，且钩子运行时实际触发（SessionStart/UserPromptSubmit 等）。
+- 已知：2 个 SKILL.md（`ieidev-test-cases`/`ieidev-test-points`）的 description 字段触发 codebuddy 更严格的 YAML 解析器告警（不影响功能），待后续修 frontmatter。
+- Qoder 宿主适配尚未提供。
 
 ## 用法（按步骤）
 
