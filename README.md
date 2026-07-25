@@ -1,9 +1,9 @@
-> **📦 ieidev-team 发布 / 分发仓（public release repo）**
+> **📦 agents-team 发布 / 分发仓（public release repo）**
 > 本仓库**只放发布说明（landing）**；插件以**自包含 npm 装机包**（`.tgz`，包内自带完整插件本体）随各版 **Releases** 分发，源码在私有仓维护。
-> ✅ 装机（Windows / Linux / macOS 通用）：到 [Releases](https://github.com/KDevSec/ieidev-team-release/releases/latest) 下载 `.tgz` → `npm i -g ./ieidev-team-0.14.0.tgz && ieidev-team`（不碰 npm registry / git 源仓，`npx ieidev-team` 不可用）。
+> ✅ 装机（Windows / Linux / macOS 通用）：到 [Releases](https://github.com/KDevSec/agents-team-release/releases/latest) 下载 `.tgz` → `npm i -g ./agents-team-1.0.0.tgz && agents-team`（不碰 npm registry / git 源仓，`npx agents-team` 不可用）。
 > 各版本制品见 Releases。
 
-# ieidev-team
+# agents-team
 
 ieidev 数字员工集群——自包含单插件（编排引擎 + 记忆底座 + 业务员工 + 能力 skill）。**0.8.0 起一包多宿主**：同一个装机包除 Claude Code 外，还可把数字员工装到 [opencode](https://opencode.ai) 宿主运行（见下「多宿主」）。
 
@@ -11,54 +11,54 @@ ieidev 数字员工集群——自包含单插件（编排引擎 + 记忆底座 
 
 ## 安装
 
-前置：[Claude Code](https://docs.claude.com/claude-code) CLI（`claude`）+ `python3`（编排引擎与状态栏需要）。方法论 skill（TDD/brainstorming/writing-plans 等 5 个，fork 自 superpowers，MIT）与 code-graph 后端 understand-anything（vendored 快照，MIT）**均已内置随包安装，无需第三方 marketplace，支持离线/内网装机**——understand-anything 已 vendored **离线全精度切片**（`packages/core/dist` + web-tree-sitter WASM 运行时 + 10 门语言语法 WASM，~27M，纯 JS+WASM、平台无关免编译，实测 strace 断网注入下 tree-sitter 满精度产图）；交互式 dashboard 与 fingerprint 增量为增值功能，需联网首装，不影响 build/trace/impact/spec-link 核心链路。可选：Playwright MCP server（`qa` / `ui-autotest` 黑盒 UI 测试需要，缺失则这两类测试 env-gated 跳过）。
+前置：[Claude Code](https://docs.claude.com/claude-code) CLI（`claude`）+ `python3`（编排引擎与状态栏需要）。方法论 skill（TDD/brainstorming/writing-plans 等 5 个，fork 自 superpowers，MIT）已随包内置，无需第三方 marketplace。code-graph 后端 understand-anything（MIT）是 `plugin.json` 声明的依赖，但**本 marketplace 暂无该条目**（待 R3 补上游远程条目），当前需自行联网从上游 marketplace 安装（见 `/agents-team:setup` 第 3 步）；缺它只影响 code-graph（build/trace/impact/spec-link），不阻断核心员工。可选：Playwright MCP server（`qa` / `ui-autotest` 黑盒 UI 测试需要，缺失则这两类测试 env-gated 跳过）。
 
-> 📦 本插件**不发布到 npm registry**、也**不依赖 git 源码仓**——只通过 GitHub Release 分发一个**自包含 npm 装机包**（`.tgz`，包内自带完整插件本体）。**装机全程本地，Windows / Linux / macOS 通用。**
+> 📦 本插件**不发布到 npm registry**、也**不依赖 git 源码仓**——只通过 GitHub Release 分发一个**自包含 npm 装机包**（`.tgz`，包内自带完整插件本体）。**插件本体自包含、本地安装，Windows / Linux / macOS 通用**；依赖的 understand-anything 不在包内，需另行联网从上游装（见上）。
 
 ### 1. 下载装机包
 
-最新版直达：<https://github.com/KDevSec/ieidev-team-release/releases/latest>（网页点 `.tgz` 即可，所有平台）。或命令行：
+最新版直达：<https://github.com/KDevSec/agents-team-release/releases/latest>（网页点 `.tgz` 即可，所有平台）。或命令行：
 
 ```sh
 # 跨平台（需 gh，自动取最新版）
-gh release download --repo KDevSec/ieidev-team-release --pattern '*.tgz'
+gh release download --repo KDevSec/agents-team-release --pattern '*.tgz'
 # Linux / macOS（指定版本直链）
-curl -fL -O https://github.com/KDevSec/ieidev-team-release/releases/download/v0.14.0/ieidev-team-0.14.0.tgz
+curl -fL -O https://github.com/KDevSec/agents-team-release/releases/download/v1.0.0/agents-team-1.0.0.tgz
 ```
 
 ```powershell
 # Windows PowerShell
-iwr https://github.com/KDevSec/ieidev-team-release/releases/download/v0.14.0/ieidev-team-0.14.0.tgz -OutFile ieidev-team-0.14.0.tgz
+iwr https://github.com/KDevSec/agents-team-release/releases/download/v1.0.0/agents-team-1.0.0.tgz -OutFile agents-team-1.0.0.tgz
 ```
 
 ### 2. 本地装（npm + node，三平台通用）
 
 ```sh
-npm i -g ./ieidev-team-0.14.0.tgz
-ieidev-team
+npm i -g ./agents-team-1.0.0.tgz
+agents-team
 ```
 
-装机做三件事，**幂等、可重跑**：注册 marketplace（用**包内本地路径**）→ 装插件 `ieidev-team@ieidev` → 接状态栏。装好后状态栏出现 `ieidev-team …`；重载插件（`/reload-plugins`）或重启 session 后生效。
+装机做三件事，**幂等、可重跑**：注册 marketplace（用**包内本地路径**）→ 装插件 `agents-team@ieidev` → 接状态栏。装好后状态栏出现 `agents-team …`；重载插件（`/reload-plugins`）或重启 session 后生效。
 
-> **为什么不碰 registry / 源码仓**：installer（`bin/cli.js` / `install.sh`）检测到包内 `.claude-plugin/marketplace.json`，直接用**包内本地路径** `marketplace add`、`plugin install` 把插件复制进 `~/.claude/plugins/cache/`。所以装机只需这个 `.tgz`，无需 npm 账号、无需访问源码仓。`npx ieidev-team` **不可用**（不发 registry）。
-> **unix / WSL / Git Bash** 另可解包跑脚本：`tar xzf ieidev-team-0.14.0.tgz && cd package && bash install.sh`（与上面 npm 装法共用同一幂等决策核）。
+> **为什么不碰 registry / 源码仓**：installer（`bin/cli.js` / `install.sh`）检测到包内 `.claude-plugin/marketplace.json`，直接用**包内本地路径** `marketplace add`、`plugin install` 把插件复制进 `~/.claude/plugins/cache/`。所以装机只需这个 `.tgz`，无需 npm 账号、无需访问源码仓。`npx agents-team` **不可用**（不发 registry）。
+> **unix / WSL / Git Bash** 另可解包跑脚本：`tar xzf agents-team-1.0.0.tgz && cd package && bash install.sh`（与上面 npm 装法共用同一幂等决策核）。
 
-常用开关（`ieidev-team --help` 看全部）：
+常用开关（`agents-team --help` 看全部）：
 
 ```sh
-ieidev-team --project                       # 写项目级状态栏（当前目录 .claude/settings.json，默认用户级）
-ieidev-team --marketplace-source <本地路径>   # 覆盖 marketplace 源（离线/自定义；默认=包内自带插件本地路径）
-ieidev-team --host all|claude-code|opencode|codebuddy  # 选装宿主（默认 all：探测本机在场宿主逐个装）
-ieidev-team --owner auto|ieidev              # opencode 主配置家归属决策（默认 auto 探测，绝不覆盖既有配置）
+agents-team --project                       # 写项目级状态栏（当前目录 .claude/settings.json，默认用户级）
+agents-team --marketplace-source <本地路径>   # 覆盖 marketplace 源（离线/自定义；默认=包内自带插件本地路径）
+agents-team --host all|claude-code|opencode|codebuddy  # 选装宿主（默认 all：探测本机在场宿主逐个装）
+agents-team --owner auto|ieidev              # opencode 主配置家归属决策（默认 auto 探测，绝不覆盖既有配置）
 ```
 
-### 3. 或用 `/plugin` 安装（需搭配 `/ieidev-team:setup` 接状态栏）
+### 3. 或用 `/plugin` 安装（需搭配 `/agents-team:setup` 接状态栏）
 
 在 Claude Code 会话里直接装插件（无需 npm）：
 
 ```text
 /plugin marketplace add <本仓或 release 内 .claude-plugin 路径>
-/plugin install ieidev-team@ieidev
+/plugin install agents-team@ieidev
 ```
 
 **与 npm 装机的差别**（Claude Code 插件机制的固有限制）：
@@ -66,14 +66,14 @@ ieidev-team --owner auto|ieidev              # opencode 主配置家归属决策
 - **主状态栏**：插件**无法**自动注册主 statusLine（只能写用户/项目级 settings.json）。下一个会话会**一次性提醒**你运行下面命令接入：
 
   ```text
-  /ieidev-team:setup            # 写用户级状态栏（--project 写项目级）
+  /agents-team:setup            # 写用户级状态栏（--project 写项目级）
   ```
 
 **卸载**：先清状态栏再卸插件，避免 settings.json 残留断链命令：
 
 ```text
-/ieidev-team:setup --uninstall
-/plugin uninstall ieidev-team@ieidev
+/agents-team:setup --uninstall
+/plugin uninstall agents-team@ieidev
 ```
 
 ### 4. 多宿主：装到 opencode（0.8.0+）
@@ -88,7 +88,7 @@ ieidev-team --owner auto|ieidev              # opencode 主配置家归属决策
 
 同一个 `.tgz` 也能把数字员工装到 [CodeBuddy Code](https://www.codebuddy.ai)（`@tencent-ai/codebuddy-code`，Claude Code 家族衍生，插件清单/plugin CLI/钩子协议与 CC 近乎同构）。前置：本机已装 `codebuddy` CLI 且已登录；`--host codebuddy` 只装 codebuddy 侧，`--host all` 探测到 codebuddy 在场时一并装。
 
-- **落地方式**：复用 codebuddy 自带 plugin CLI（`codebuddy plugin marketplace add` + `codebuddy plugin install ieidev-team@ieidev`），对称于 Claude Code 装机段——不像 opencode 需要自研文件落地/协议翻译层。
+- **落地方式**：复用 codebuddy 自带 plugin CLI（`codebuddy plugin marketplace add` + `codebuddy plugin install agents-team@ieidev`），对称于 Claude Code 装机段——不像 opencode 需要自研文件落地/协议翻译层。
 - **模型档位**：5 档语义 tier 映射到 codebuddy 模型面（强档 `glm-5.2`、执行档 `deepseek-v4-flash`），宿主可独立换模型不改员工定义。
 - **编排驱动（L2）**：`flow-driver`/`goal` 可用 `codebuddy -p` spawn worker；判停/续跑与 Claude Code 一致（主判据读 `.ieidev/` 引擎状态，宿主无关）。驱动为单测覆盖 + 与 CC/opencode 同构；**真机 L2「待审核→续跑」全链路待坐实**。
 - 实测（CodeBuddy Code 2.117.0）：装机后交互会话内 36 个 agent / 6 个 command / 25 个 skill / 18 个钩子被发现，且钩子运行时实际触发（SessionStart/UserPromptSubmit 等）。
@@ -110,7 +110,7 @@ ieidev-team --owner auto|ieidev              # opencode 主配置家归属决策
 1. 在你的项目目录起 Claude Code 会话，一句话说目标：
 
    ```text
-   /ieidev-team:goal 给登录页加「记住我」并出可上线版本
+   /agents-team:goal 给登录页加「记住我」并出可上线版本
    ```
 
 2. `goal` 把目标路由到交付生命周期，渲**一屏编排结论**（要跑哪几段、各段哪个员工、人工闸停在哪），让你确认或微调。
@@ -124,7 +124,7 @@ ieidev-team --owner auto|ieidev              # opencode 主配置家归属决策
 **B. 只让某一个员工跑它的 SOP —— `flow-driver`**
 
 ```text
-/ieidev-team:flow-driver dev-engineer --task "按 PLAN 实现登录失败锁定策略"
+/agents-team:flow-driver dev-engineer --task "按 PLAN 实现登录失败锁定策略"
 ```
 
 不走总编排，直接驱动指定数字员工跑自己的 flow。员工 id 见下方「集群概览」（`req-architect` / `dev-engineer` / `test-engineer` …）。
@@ -134,7 +134,7 @@ ieidev-team --owner auto|ieidev              # opencode 主配置家归属决策
 HUD 把数字员工的进展可视化。三个通道，按需选。命令里的 `${CLAUDE_PLUGIN_ROOT}` 是装机后的插件根目录（在插件目录里也可直接用 `PYTHONPATH=pyieidev`）。
 
 **① 状态栏（装机即有，零操作）**
-Claude Code 底部 `ieidev-team …` 单行，显示在跑的需求 / 当前节点 / 活动；无在跑任务时显示 `ieidev-team │ 暂无在跑需求`。
+Claude Code 底部 `agents-team …` 单行，显示在跑的需求 / 当前节点 / 活动；无在跑任务时显示 `agents-team │ 暂无在跑需求`。
 
 **② 实时全局台（0.2.0 新，推荐）—— 一个浏览器台子看本机所有项目**
 
