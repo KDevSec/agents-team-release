@@ -1,0 +1,24 @@
+README.md
+  s_f22d65108157c1::t_357769f3fd0f45 14,16
+  s_f22d65108157c1::t_8520ca188f4854 31
+  s_f22d65108157c1::t_01f1680a2605db 26
+  s_f22d65108157c1::t_f73947d6ae2fc9 3
+  s_f22d65108157c1::t_ab1231b4325d7b 44
+  s_f22d65108157c1::t_ea28a2a86f128d 37
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.16",
+  "base_commit_sha": "b35fe04fdab8eb814f5b55d8b0f43975765ffcac",
+  "prompts": {},
+  "sessions": {
+    "s_f22d65108157c1": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6d39fa02-b39b-44dc-bb55-8b2fd087f4df",
+        "model": "glm-5.2"
+      },
+      "human_author": "ly <ly1989abc@126.com>"
+    }
+  }
+}
