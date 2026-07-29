@@ -1,0 +1,19 @@
+README.md
+  s_f016e823536359::t_7dd01465fab75f 1-5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.16",
+  "base_commit_sha": "0c61b8fc968aba747d78e832bed43ef0c50b5ef3",
+  "prompts": {},
+  "sessions": {
+    "s_f016e823536359": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "96b0dbd9-c57a-4243-a7fa-f9a048fbf080",
+        "model": "deepseek-v4-pro"
+      },
+      "human_author": "ly <ly1989abc@126.com>"
+    }
+  }
+}
