@@ -1,24 +1,19 @@
 > **📦 agents-team 发布 / 分发仓（public release repo）**
 > 本仓库**只放发布说明（landing）**；插件以**自包含 npm 装机包**（`.tgz`，包内自带完整插件本体）随各版 **Releases** 分发，源码在私有仓维护。
-> ✅ 装机（Windows / Linux / macOS 通用）：到 [Releases](https://github.com/KDevSec/agents-team-release/releases/latest) 下载 `.tgz` → `npm i -g ./agents-team-1.1.1.tgz && agents-team`（不碰 npm registry / git 源仓，`npx agents-team` 不可用）。
-> 各版本制品见 Releases。
-
-> **📦 agents-team 发布 / 分发仓（public release repo）**
-> 本仓库**只放发布说明（landing）**；插件以**自包含 npm 装机包**（`.tgz`，包内自带完整插件本体）随各版 **Releases** 分发，源码在私有仓维护。
-> ✅ 装机（Windows / Linux / macOS 通用）：到 [Releases](https://github.com/KDevSec/agents-team-release/releases/latest) 下载 `.tgz` → `npm i -g ./agents-team-1.0.1.tgz && agents-team`（不碰 npm registry / git 源仓，`npx agents-team` 不可用）。
+> ✅ 装机（Windows / Linux / macOS 通用）：到 [Releases](https://github.com/KDevSec/agents-team-release/releases/latest) 下载 `.tgz` → `npm i -g ./agents-team-X.Y.Z.tgz && agents-team`（不碰 npm registry / git 源仓，`npx agents-team` 不可用）。
 > 各版本制品见 Releases。
 
 # agents-team
 
-ieidev 数字员工集群——自包含单插件（编排引擎 + 记忆底座 + 业务员工 + 能力 skill）。**0.8.0 起一包多宿主**：同一个装机包除 Claude Code 外，还可把数字员工装到 [opencode](https://opencode.ai) 宿主运行（见下「多宿主」）。
+数字员工集群——自包含单插件（编排引擎 + 记忆底座 + 业务员工 + 能力 skill）。**0.8.0 起一包多宿主**：同一个装机包除 Claude Code 外，还可把数字员工装到 [opencode](https://opencode.ai) 宿主运行（见下「多宿主」）。
 
 从 [KDevSec/kdev-agents](https://github.com/KDevSec/kdev-agents) clean-room 抽取并通用化（去公司定制前缀、去第三方依赖、单插件化）。源仓保持冻结，本仓为通用产品going-forward 主线。
 
 ## 安装
 
-前置：[Claude Code](https://docs.claude.com/claude-code) CLI（`claude`）+ `python3`（编排引擎与状态栏需要）。方法论 skill（TDD/brainstorming/writing-plans 等 5 个，fork 自 superpowers，MIT）已随包内置，无需第三方 marketplace。code-graph 后端 understand-anything（MIT）是 `plugin.json` 声明的**跨 marketplace 依赖**——装机时自动 `marketplace add` 官方 UA 源（`Egonex-AI/Understand-Anything`）并级联装上 `understand-anything@understand-anything`（best-effort，失败只 warn 不阻断装机——UA 缺失只影响 code-graph 的 build/trace/impact/spec-link，编排与记忆全部可用）。可选：Playwright MCP server（`qa` / `ui-autotest` 黑盒 UI 测试需要，缺失则这两类测试 env-gated 跳过）。
+前置：[Claude Code](https://docs.claude.com/claude-code) CLI（`claude`）+ `python3`（编排引擎与状态栏需要）。方法论 skill（TDD/brainstorming/writing-plans 等 5 个，fork 自 superpowers，MIT）已随包内置，无需第三方 marketplace。code-graph 后端 understand-anything（MIT）是 `plugin.json` 声明的依赖，但**本 marketplace 暂无该条目**（待 R3 补上游远程条目），当前需自行联网从上游 marketplace 安装（见 `/agents-team:setup` 第 3 步）；缺它只影响 code-graph（build/trace/impact/spec-link），不阻断核心员工。可选：Playwright MCP server（`qa` / `ui-autotest` 黑盒 UI 测试需要，缺失则这两类测试 env-gated 跳过）。
 
-> 📦 本插件**不发布到 npm registry**、也**不依赖 git 源码仓**——只通过 GitHub Release 分发一个**自包含 npm 装机包**（`.tgz`，包内自带完整插件本体）。**插件本体自包含、本地安装，Windows / Linux / macOS 通用**；依赖的 understand-anything 不在包内，装机时联网从官方 marketplace 级联装（见上）。
+> 📦 本插件**不发布到 npm registry**、也**不依赖 git 源码仓**——只通过 GitHub Release 分发一个**自包含 npm 装机包**（`.tgz`，包内自带完整插件本体）。**插件本体自包含、本地安装，Windows / Linux / macOS 通用**；依赖的 understand-anything 不在包内，需另行联网从上游装（见上）。
 
 ### 1. 下载装机包
 
@@ -28,25 +23,25 @@ ieidev 数字员工集群——自包含单插件（编排引擎 + 记忆底座 
 # 跨平台（需 gh，自动取最新版）
 gh release download --repo KDevSec/agents-team-release --pattern '*.tgz'
 # Linux / macOS（指定版本直链）
-curl -fL -O https://github.com/KDevSec/agents-team-release/releases/download/v1.0.1/agents-team-1.0.1.tgz
+curl -fL -O https://github.com/KDevSec/agents-team-release/releases/download/v1.2.0/agents-team-1.2.0.tgz
 ```
 
 ```powershell
 # Windows PowerShell
-iwr https://github.com/KDevSec/agents-team-release/releases/download/v1.0.1/agents-team-1.0.1.tgz -OutFile agents-team-1.0.1.tgz
+iwr https://github.com/KDevSec/agents-team-release/releases/download/v1.2.0/agents-team-1.2.0.tgz -OutFile agents-team-1.2.0.tgz
 ```
 
 ### 2. 本地装（npm + node，三平台通用）
 
 ```sh
-npm i -g ./agents-team-1.0.1.tgz
+npm i -g ./agents-team-1.2.0.tgz
 agents-team
 ```
 
 装机做三件事，**幂等、可重跑**：注册 marketplace（用**包内本地路径**）→ 装插件 `agents-team@ieidev` → 接状态栏。装好后状态栏出现 `agents-team …`；重载插件（`/reload-plugins`）或重启 session 后生效。
 
 > **为什么不碰 registry / 源码仓**：installer（`bin/cli.js` / `install.sh`）检测到包内 `.claude-plugin/marketplace.json`，直接用**包内本地路径** `marketplace add`、`plugin install` 把插件复制进 `~/.claude/plugins/cache/`。所以装机只需这个 `.tgz`，无需 npm 账号、无需访问源码仓。`npx agents-team` **不可用**（不发 registry）。
-> **unix / WSL / Git Bash** 另可解包跑脚本：`tar xzf agents-team-1.0.1.tgz && cd package && bash install.sh`（与上面 npm 装法共用同一幂等决策核）。
+> **unix / WSL / Git Bash** 另可解包跑脚本：`tar xzf agents-team-1.2.0.tgz && cd package && bash install.sh`（与上面 npm 装法共用同一幂等决策核）。
 
 常用开关（`agents-team --help` 看全部）：
 
@@ -85,7 +80,7 @@ agents-team --owner auto|ieidev              # opencode 主配置家归属决策
 
 同一个 `.tgz` 也能把数字员工装到 opencode。默认 `--host all` 探测本机在场宿主逐个装（opencode 需已安装且**至少启动过一次**——配置目录尚未生成时视为未在场跳过）；`--host opencode` 只装 opencode 侧。
 
-- **隔离共存**：ieidev 资产落**专属配置家**（默认 `~/.config/opencode-ieidev/opencode`，worker 经 XDG 定向消费），不触碰你现有的 opencode 全局配置；与 oh-my-openagent（oma）同机时归属自动探测让位（`--owner` 可显式指定），**绝不覆盖既有 oma / 个人配置**。
+- **隔离共存**：本插件资产落**专属配置家**（默认 `~/.config/opencode-ieidev/opencode`，worker 经 XDG 定向消费），不触碰你现有的 opencode 全局配置；与 oh-my-openagent（oma）同机时归属自动探测让位（`--owner` 可显式指定），**绝不覆盖既有 oma / 个人配置**。
 - **行为对齐**：agent 发现、拦截插件加载、人工审核闸在 opencode worker 上端到端生效；员工模型由 5 档语义 tier 统一映射到各宿主模型，宿主可独立换模型不改员工定义。
 - Windows 上 opencode 宿主的配置隔离为 best-effort，未经真机验证（CC 宿主不受影响）。
 
@@ -185,6 +180,8 @@ PYTHONPATH=${CLAUDE_PLUGIN_ROOT}/pyieidev python3 -m ieidev_hud render          
 | 测试工程师 `test-engineer` | 黑盒测试点/用例设计 → UI/API 自动化执行 |
 | 调研员 `researcher` | 探索调研：立题（问题域/成功判据/方法集）→ 外部/内部取证 → 综合成文（引用 + 置信度分级）|
 | 评审专家 `reviewer` | 方案/SR/故事/原型/代码/安全/测试设计/测试覆盖/调研 多维度百分制评审 gate |
+
+> **评审密度可调**：req-architect 的 8 个复合评审闸默认走 `review_profile: standard`（合并 4 个 checkpoint，全程专家、覆盖不丢），`full` 恢复 1.0 细粒度 8 闸、`light` 合并 2 闸。确认屏 `[rp light|standard|full]` 切档；结构与策略分层，改 SOP = 改源 node-table 或 `review-merge.yml` + 跑 `compile-review-tables` 重生。详见 `gate-decision-logic.md`「review_profile 档位」段。
 | **CEO 总编排** = `goal` skill | 高层目标 → 交付链编排 + 人工闸 + 发函 CQO |
 | **CQO 监督员** = `cqo-orchestrator` | 跨 flow 质量监督（L-a 逐事件全检 + L-b circuit-breaker 聚合 + L-c 棒间建议），建议非拦截 |
 
