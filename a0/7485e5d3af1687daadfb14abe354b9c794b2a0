@@ -1,0 +1,19 @@
+README.md
+  s_3015e42feabdee::t_8a4d0bd2ddfe66 3,8,14,16,26,31,37,44,83,183-184
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.18",
+  "base_commit_sha": "a07485e5d3af1687daadfb14abe354b9c794b2a0",
+  "prompts": {},
+  "sessions": {
+    "s_3015e42feabdee": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9c7161ae-af18-471e-ad6e-0285aa7fbf06",
+        "model": "glm-5.2"
+      },
+      "human_author": "ly <ly1989abc@126.com>"
+    }
+  }
+}
