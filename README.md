@@ -1,6 +1,6 @@
 > **📦 agents-team 发布 / 分发仓（public release repo）**
 > 本仓库**只放发布说明（landing）**；插件以**自包含 npm 装机包**（`.tgz`，包内自带完整插件本体）随各版 **Releases** 分发，源码在私有仓维护。
-> ✅ 装机（Windows / Linux / macOS 通用）：到 [Releases](https://github.com/KDevSec/agents-team-release/releases/latest) 下载 `.tgz` → `npm i -g ./agents-team-X.Y.Z.tgz && agents-team`（不碰 npm registry / git 源仓，`npx agents-team` 不可用）。
+> ✅ 装机（Windows / Linux / macOS 通用）：到 [Releases](https://github.com/KDevSec/agents-team-release/releases/latest) 下载 `.tgz` → `npm i -g ./agents-team-1.2.1.tgz && agents-team`（不碰 npm registry / git 源仓，`npx agents-team` 不可用）。
 > 各版本制品见 Releases。
 
 # agents-team
@@ -11,7 +11,17 @@
 
 ## 安装
 
-前置：[Claude Code](https://docs.claude.com/claude-code) CLI（`claude`）+ `python3`（编排引擎与状态栏需要）。方法论 skill（TDD/brainstorming/writing-plans 等 5 个，fork 自 superpowers，MIT）已随包内置，无需第三方 marketplace。code-graph 后端 understand-anything（MIT）是 `plugin.json` 声明的依赖，但**本 marketplace 暂无该条目**（待 R3 补上游远程条目），当前需自行联网从上游 marketplace 安装（见 `/agents-team:setup` 第 3 步）；缺它只影响 code-graph（build/trace/impact/spec-link），不阻断核心员工。可选：Playwright MCP server（`qa` / `ui-autotest` 黑盒 UI 测试需要，缺失则这两类测试 env-gated 跳过）。
+前置：[Claude Code](https://docs.claude.com/claude-code) CLI（`claude`）+ `python3`（3.10+，编排引擎与状态栏需要）。方法论 skill（TDD/brainstorming/writing-plans 等 5 个，fork 自 superpowers，MIT）已随包内置，无需第三方 marketplace。code-graph 后端 understand-anything（MIT）是跨 marketplace 依赖的官方远程条目（marketplace `understand-anything`，上游仓 [Egonex-AI/Understand-Anything](https://github.com/Egonex-AI/Understand-Anything)），装机时**自动联网级联安装**；缺它只影响 code-graph（build/trace/impact/spec-link），不阻断核心员工。可选：Playwright MCP server（`qa` / `ui-autotest` 黑盒 UI 测试需要，缺失则这两类测试 env-gated 跳过）。
+
+> 🌐 **弱网 / 无 GitHub SSH 环境注意**：UA 是 34M 的 git 仓，宿主内部克隆无续传，弱网下反复断连会导致装机失败（qoder/codebuddy 对依赖全有全无：UA 缺 = agents-team 被拒装）。请先手动浅克隆再注册目录型 marketplace，然后重跑装机（以 qoder 为例，codebuddy 换 `codebuddy` + `~/.codebuddy`）：
+>
+> ```bash
+> git clone --depth 1 --single-branch --filter=blob:none https://github.com/Egonex-AI/Understand-Anything ~/.qoder/understand-anything-marketplace-src
+> qodercli plugin marketplace add ~/.qoder/understand-anything-marketplace-src
+> agents-team   # 重跑装机
+> ```
+>
+> 该目录别删（目录型 marketplace 从它读）；以后更新 UA 用 `git -C <目录> pull`。
 
 > 📦 本插件**不发布到 npm registry**、也**不依赖 git 源码仓**——只通过 GitHub Release 分发一个**自包含 npm 装机包**（`.tgz`，包内自带完整插件本体）。**插件本体自包含、本地安装，Windows / Linux / macOS 通用**；依赖的 understand-anything 不在包内，需另行联网从上游装（见上）。
 
@@ -23,25 +33,25 @@
 # 跨平台（需 gh，自动取最新版）
 gh release download --repo KDevSec/agents-team-release --pattern '*.tgz'
 # Linux / macOS（指定版本直链）
-curl -fL -O https://github.com/KDevSec/agents-team-release/releases/download/v1.2.0/agents-team-1.2.0.tgz
+curl -fL -O https://github.com/KDevSec/agents-team-release/releases/download/v1.2.1/agents-team-1.2.1.tgz
 ```
 
 ```powershell
 # Windows PowerShell
-iwr https://github.com/KDevSec/agents-team-release/releases/download/v1.2.0/agents-team-1.2.0.tgz -OutFile agents-team-1.2.0.tgz
+iwr https://github.com/KDevSec/agents-team-release/releases/download/v1.2.1/agents-team-1.2.1.tgz -OutFile agents-team-1.2.1.tgz
 ```
 
 ### 2. 本地装（npm + node，三平台通用）
 
 ```sh
-npm i -g ./agents-team-1.2.0.tgz
+npm i -g ./agents-team-1.2.1.tgz
 agents-team
 ```
 
 装机做三件事，**幂等、可重跑**：注册 marketplace（用**包内本地路径**）→ 装插件 `agents-team@ieidev` → 接状态栏。装好后状态栏出现 `agents-team …`；重载插件（`/reload-plugins`）或重启 session 后生效。
 
 > **为什么不碰 registry / 源码仓**：installer（`bin/cli.js` / `install.sh`）检测到包内 `.claude-plugin/marketplace.json`，直接用**包内本地路径** `marketplace add`、`plugin install` 把插件复制进 `~/.claude/plugins/cache/`。所以装机只需这个 `.tgz`，无需 npm 账号、无需访问源码仓。`npx agents-team` **不可用**（不发 registry）。
-> **unix / WSL / Git Bash** 另可解包跑脚本：`tar xzf agents-team-1.2.0.tgz && cd package && bash install.sh`（与上面 npm 装法共用同一幂等决策核）。
+> **unix / WSL / Git Bash** 另可解包跑脚本：`tar xzf agents-team-1.2.1.tgz && cd package && bash install.sh`（与上面 npm 装法共用同一幂等决策核）。
 
 常用开关（`agents-team --help` 看全部）：
 
